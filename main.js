@@ -1,8 +1,10 @@
 let runningTotal = 0;
 let buffer = '0';
 let previousOperator;
+let currentOperation = '';
 
 const screen = document.querySelector('#telaResposta');
+const operationDisplay = document.querySelector('#display-conta');
 
 function buttonClick(value) {
     if (isNaN(value)) {
@@ -11,6 +13,7 @@ function buttonClick(value) {
         handleNumber(value);
     }
     screen.innerHTML = buffer;
+    operationDisplay.innerHTML = currentOperation;
 }
 
 function handleSymbol(symbol) {
@@ -31,6 +34,7 @@ function handleSymbol(symbol) {
         case 'CE':
             buffer = '0';
             runningTotal = 0;
+            currentOperation = '';
             break;
         case '+':
         case '-':
@@ -54,8 +58,10 @@ function handleMath(symbol) {
 
     if (runningTotal === 0){
         runningTotal = intBuffer
+        currentOperation = buffer + ' ' + symbol;
     } else {
         flushOperation(intBuffer);
+        currentOperation = buffer + ' ' + symbol;
     }
     previousOperator = symbol;
     buffer = '0';
