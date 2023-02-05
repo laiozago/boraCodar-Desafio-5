@@ -23,6 +23,10 @@ function lidaSimbolo(symbol) {
             memoria = '0';
             totalAtual = 0;
             break;
+        case 'Backspace':
+            memoria = '0';
+            totalAtual = 0;
+            break;
         case '=':
             if(operacaoAnterior === null){
                 return
@@ -34,6 +38,11 @@ function lidaSimbolo(symbol) {
             totalAtual = 0;
             break;
         case 'CE':
+            memoria = '0';
+            totalAtual = 0;
+            operacaoAtual = '';
+            break;
+        case 'Delete':
             memoria = '0';
             totalAtual = 0;
             operacaoAtual = '';
@@ -108,6 +117,8 @@ function init() {
             lidaSimbolo(event.key);
         } else if (event.key === "Enter" || event.key === "=") {
             lidaSimbolo("=");
+        } else if (event.key === "Delete" || event.key === "Backspace"){
+            lidaSimbolo(event.key);
         }
         tela.innerHTML = memoria;
         telaDeOperacao.innerHTML = operacaoAtual;
