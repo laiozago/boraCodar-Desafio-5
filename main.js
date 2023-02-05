@@ -1,114 +1,117 @@
-let runningTotal = 0;
-let buffer = '0';
-let previousOperator;
-let currentOperation = '';
-
-const screen = document.querySelector('#telaResposta');
-const operationDisplay = document.querySelector('#display-conta');
-
-function buttonClick(value) {
+//* Declara variaveis
+let totalAtual = 0;
+let memoria = '0';
+let operacaoAnterior;
+let operacaoAtual = '';
+//*Seleciona a tela de resposta e a tela de conta
+const tela = document.querySelector('#telaResposta');
+const telaDeOperacao = document.querySelector('#display-conta');
+//*Função para quando uma tecla é clicada
+function clickDoBotao(value) {
     if (isNaN(value)) {
-        handleSymbol(value);
+        lidaSimbolo(value);
     } else {
-        handleNumber(value);
+        lidaNumero(value);
     }
-    screen.innerHTML = buffer;
-    operationDisplay.innerHTML = currentOperation;
+    tela.innerHTML = memoria;
+    telaDeOperacao.innerHTML = operacaoAtual;
 }
-
-function handleSymbol(symbol) {
+//*Função para lidar com símbolos
+function lidaSimbolo(symbol) {
     switch (symbol) {
         case 'C':
-            buffer = '0';
-            runningTotal = 0;
+            memoria = '0';
+            totalAtual = 0;
             break;
         case '=':
-            if(previousOperator === null){
+            if(operacaoAnterior === null){
                 return
             }
-            flushOperation(parseInt(buffer));
-            previousOperator = null;
-            currentOperation += buffer + ' ' + symbol;
-            buffer = runningTotal;
-            runningTotal = 0;
+            realizaOperacao(parseInt(memoria));
+            operacaoAnterior = null;
+            operacaoAtual += memoria + ' ' + symbol;
+            memoria = totalAtual;
+            totalAtual = 0;
             break;
         case 'CE':
-            buffer = '0';
-            runningTotal = 0;
-            currentOperation = '';
+            memoria = '0';
+            totalAtual = 0;
+            operacaoAtual = '';
             break;
         case '+':
         case '-':
         case 'x':
         case '/':
         case '%':
-            handleMath(symbol);
+        case '*':
+            lidaConta(symbol);
             break;
     
         default:
             break;
     }
 }
-
-function handleMath(symbol) {
-    if(buffer === '0'){
+//*Função para fazer cálculo
+function lidaConta(symbol) {
+    if(memoria === '0'){
         return;
     }
 
-    const intBuffer = parseInt(buffer);
+    const intMemoria = parseInt(memoria);
 
-    if (runningTotal === 0){
-        runningTotal = intBuffer;
-        currentOperation = buffer + ' ' + symbol;
+    if (totalAtual === 0){
+        totalAtual = intMemoria;
+        operacaoAtual = memoria + ' ' + symbol;
     } else {
-        flushOperation(intBuffer);
-        currentOperation = buffer + ' ' + symbol;
+        realizaOperacao(intMemoria);
+        operacaoAtual = memoria + ' ' + symbol;
     }
-    previousOperator = symbol;
-    buffer = '0';
+    operacaoAnterior = symbol;
+    memoria = '0';
 }
-
-function flushOperation(intBuffer) {
-    if (previousOperator === '+') {
-        runningTotal += intBuffer;
-    } else if (previousOperator === '-') {
-        runningTotal -= intBuffer;
-    } else if (previousOperator === 'x') {
-        runningTotal *= intBuffer;
-    } else if (previousOperator === '/') {
-        runningTotal /= intBuffer;
-    } else if (previousOperator === '%') {
-        runningTotal = runningTotal*intBuffer/100;
+//*Função para fazer cálculo
+function realizaOperacao(intMemoria) {
+    if (operacaoAnterior === '+') {
+        totalAtual += intMemoria;
+    } else if (operacaoAnterior === '-') {
+        totalAtual -= intMemoria;
+    } else if (operacaoAnterior === 'x'|| operacaoAnterior === '*') {
+        totalAtual *= intMemoria;
+    } else if (operacaoAnterior === '/') {
+        totalAtual /= intMemoria;
+    } else if (operacaoAnterior === '%') {
+        totalAtual = totalAtual*intMemoria/100;
     }
 }
-
-function handleNumber(numberString) {
-    if (buffer === '0') {
-        buffer = numberString;
+//*Função para lidar com números
+function lidaNumero(numberString) {
+    if (memoria === '0') {
+        memoria = numberString;
     } else {
-        buffer += numberString;
+        memoria += numberString;
     }
 }
-
-document.addEventListener("keydown", function(event) {
-    if (!isNaN(event.key)) {
-        handleNumber(event.key);
-    } else if (event.key === "+" || event.key === "-" || event.key === "*" || event.key === "/" || event.key === "%") {
-        handleSymbol(event.key);
-    } else if (event.key === "Enter" || event.key === "=") {
-        handleSymbol("=");
-    }
-    screen.innerHTML = buffer;
-});
+//*Adiciona escutador de evento na tela e no teclado
 
 function init() {
     document
-        .querySelectorAll('.teclado-botao')
-        .forEach(botao => {
-            botao.addEventListener("click", function (event) {
-                buttonClick(event.target.innerText);
-            })
+    .querySelectorAll('.teclado-botao')
+    .forEach(botao => {
+        botao.addEventListener("click", function (event) {
+            clickDoBotao(event.target.innerText);
         })
+    })
+    document.addEventListener("keydown", function(event) {
+        if (!isNaN(event.key)) {
+            lidaNumero(event.key);
+        } else if (event.key === "+" || event.key === "-" || event.key === "*" || event.key === "/" || event.key === "%") {
+            lidaSimbolo(event.key);
+        } else if (event.key === "Enter" || event.key === "=") {
+            lidaSimbolo("=");
+        }
+        tela.innerHTML = memoria;
+        telaDeOperacao.innerHTML = operacaoAtual;
+    });
 }
 
 init();
