@@ -28,6 +28,7 @@ function handleSymbol(symbol) {
             }
             flushOperation(parseInt(buffer));
             previousOperator = null;
+            currentOperation += buffer + ' ' + symbol;
             buffer = runningTotal;
             runningTotal = 0;
             break;
@@ -57,7 +58,7 @@ function handleMath(symbol) {
     const intBuffer = parseInt(buffer);
 
     if (runningTotal === 0){
-        runningTotal = intBuffer
+        runningTotal = intBuffer;
         currentOperation = buffer + ' ' + symbol;
     } else {
         flushOperation(intBuffer);
