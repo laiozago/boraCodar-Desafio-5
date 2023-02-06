@@ -31,7 +31,7 @@ function lidaSimbolo(symbol) {
             if(operacaoAnterior === null){
                 return
             }
-            realizaOperacao(parseInt(memoria));
+            realizaOperacao(parseFloat(memoria));
             operacaoAnterior = null;
             operacaoAtual += memoria + ' ' + symbol;
             memoria = totalAtual;
@@ -46,6 +46,9 @@ function lidaSimbolo(symbol) {
             memoria = '0';
             totalAtual = 0;
             operacaoAtual = '';
+            break;
+        case '.':
+            lidaPontoDecimal();
             break;
         case '+':
         case '-':
@@ -66,7 +69,7 @@ function lidaConta(symbol) {
         return;
     }
 
-    const intMemoria = parseInt(memoria);
+    const intMemoria = parseFloat(memoria);
 
     if (totalAtual === 0){
         totalAtual = intMemoria;
@@ -119,6 +122,8 @@ function init() {
             lidaSimbolo("=");
         } else if (event.key === "Delete" || event.key === "Backspace"){
             lidaSimbolo(event.key);
+        } else if (event.key === "," || event.key === ".") {
+            lidaPontoDecimal();
         }
         tela.innerHTML = memoria;
         telaDeOperacao.innerHTML = operacaoAtual;
@@ -126,3 +131,11 @@ function init() {
 }
 
 init();
+
+//função para lidar com o ponto decimal
+function lidaPontoDecimal() {
+    if (memoria.includes('.')) {
+        return;
+    }
+    memoria += '.';
+}
